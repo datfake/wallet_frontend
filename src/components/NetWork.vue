@@ -72,17 +72,21 @@
             <tbody>
               <tr v-for="item in networks" :key="item.id">
                 <td>{{ item.name }}</td>
-                <td>{{ item.ip }}</td>
+                <td>{{ item.chainID }}</td>
                 <td>{{ item.RPC }}</td>
                 <td>
-                  <v-btn @click="deleteNetwork(item.id)" depressed color="error">Delete</v-btn>
+                  <v-btn @click="deleteNetwork(item.chainID)" depressed color="error"
+                    >Delete</v-btn
+                  >
                 </td>
               </tr>
             </tbody>
           </template>
         </v-simple-table>
       </v-app>
-      <v-app v-if="tab == 1">he</v-app>
+      <v-app v-if="tab == 1">
+
+      </v-app>
     </v-card>
   </v-container>
 </template>
@@ -114,10 +118,22 @@ export default {
         .post("http://localhost:3300/wallet/network/create", {
           chainID: this.chainID,
           chainName: this.chainName,
-           chainRPC: this.chainRPC,
+          chainRPC: this.chainRPC,
         })
         .then(function (response) {
           console.log(response);
+          axios
+            .get("http://localhost:3300/wallet/network/list")
+            .then((response) => (this.networks = response.data));
+        });
+    },
+    deleteNetwork(id) {
+      axios.delete('http://localhost:3300/wallet/network/delete/'+ id)
+      .then(response => {
+        console.log(response),
+        axios
+            .get("http://localhost:3300/wallet/network/list")
+            .then((response) => (this.networks = response.data));
         });
     },
   },
